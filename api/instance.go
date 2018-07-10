@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/muka/redzilla/docker"
-	"github.com/muka/redzilla/model"
-	"github.com/muka/redzilla/storage"
+	"gitlab.fbk.eu/raptorbox/redzilla/docker"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/storage"
 )
 
 const instanceCollection = "instances"

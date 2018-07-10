@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/muka/redzilla/docker"
-	"github.com/muka/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/docker"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
 )
 
 //Reset reset container runtime information

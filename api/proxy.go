@@ -10,7 +10,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
-	"github.com/muka/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
 )
 
 var reverseProxy *httputil.ReverseProxy

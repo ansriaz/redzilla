@@ -3,7 +3,7 @@ version: '2'
 services:
 
   redzilla:
-    image: opny/redzilla
+    image: raptorbox/redzilla
     environment:
       # default compose network name
       REDZILLA_NETWORK: redzilla_redzilla

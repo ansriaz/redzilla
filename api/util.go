@@ -6,7 +6,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
-	"github.com/muka/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
 )
 
 // JSONError a JSON response in case of error
@@ -41,7 +41,21 @@ func extractSubdomain(host string, cfg *model.Config) string {
 	if len(host) == 0 {
 		return ""
 	}
-	hostname := host[:strings.Index(host, ":")]
+	hostname := ""
+	if strings.Contains(host, ":") {
+		hostname = host[:strings.Index(host, ":")]
+	} else {
+		hostname = host
+	}
 	name := strings.Replace(hostname, "."+cfg.Domain, "", -1)
 	return name
+}
+
+func extractInstanceName(path string, cfg *model.Config) string {
+	if len(path) == 0 {
+		return ""
+	}
+	strFind := "/instance/"
+	hostname := path[strings.Index(path, strFind)+len(strFind):]
+	return hostname
 }

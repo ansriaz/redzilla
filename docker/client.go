@@ -16,8 +16,8 @@ import (
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"github.com/muka/redzilla/model"
-	"github.com/muka/redzilla/storage"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/storage"
 
 	"golang.org/x/net/context"
 )

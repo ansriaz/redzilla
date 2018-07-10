@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/muka/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
 )
 
 // PathExists check if a path exists

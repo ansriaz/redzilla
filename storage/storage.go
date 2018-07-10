@@ -2,7 +2,7 @@ package storage
 
 import (
 	"github.com/Sirupsen/logrus"
-	"github.com/muka/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
 )
 
 var store *Store

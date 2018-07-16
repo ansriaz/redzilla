@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/muka/redzilla/model"
+	"gitlab.fbk.eu/raptorbox/redzilla/model"
 )
 
 func TestAuthReqPost(t *testing.T) {

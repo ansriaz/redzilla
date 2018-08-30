@@ -17,7 +17,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	Buildtimestamp *string
+	Githash        *string
+)
+
 func main() {
+
+	if Buildtimestamp != nil && Githash != nil {
+		fmt.Printf("Build timestamp: %s Git Hash: %s\n", Buildtimestamp, Githash)
+	}
 
 	viper.SetDefault("Network", "redzilla")
 	viper.SetDefault("APIPort", ":3000")

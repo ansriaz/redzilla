@@ -182,7 +182,7 @@ func StartContainer(name string, cfg *model.Config) error {
 			"redzilla":          "1",
 			"redzilla_instance": "redzilla_" + name,
 		}
-		exposedPorts := map[nat.Port]struct{}{
+		exposedPorts := nat.PortSet{
 			"1880/tcp": {},
 		}
 

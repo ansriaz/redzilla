@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
-	"gitlab.fbk.eu/raptorbox/redzilla/docker"
-	"gitlab.fbk.eu/raptorbox/redzilla/model"
+	"github.com/ansriaz/redzilla/docker"
+	"github.com/ansriaz/redzilla/model"
+	"github.com/sirupsen/logrus"
 )
 
 //Reset reset container runtime information

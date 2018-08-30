@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"github.com/Sirupsen/logrus"
-	"gitlab.fbk.eu/raptorbox/redzilla/model"
+	"github.com/ansriaz/redzilla/model"
+	"github.com/sirupsen/logrus"
 )
 
 var store *Store

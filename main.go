@@ -10,10 +10,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/ansriaz/redzilla/model"
+	"github.com/ansriaz/redzilla/service"
 	"github.com/gin-gonic/gin"
-	"github.com/muka/redzilla/model"
-	"github.com/muka/redzilla/service"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

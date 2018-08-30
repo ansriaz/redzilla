@@ -6,7 +6,7 @@ build:
 	CGO_ENABLED=0 go build -a -ldflags '-s' -o redzilla
 
 docker/build:
-	docker build . -t raptorbox/redzilla:latest
+	docker build . -t ansriaz/redzilla:latest
 
 docker/push: docker/build
-	docker push raptorbox/redzilla:latest
+	docker push ansriaz/redzilla:latest

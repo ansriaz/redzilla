@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/ansriaz/redzilla/model"
 	"github.com/gin-gonic/gin"
-	"gitlab.fbk.eu/raptorbox/redzilla/model"
+	"github.com/sirupsen/logrus"
 )
 
 var reverseProxy *httputil.ReverseProxy

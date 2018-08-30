@@ -9,15 +9,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/ansriaz/redzilla/model"
+	"github.com/ansriaz/redzilla/storage"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"gitlab.fbk.eu/raptorbox/redzilla/model"
-	"gitlab.fbk.eu/raptorbox/redzilla/storage"
+	"github.com/sirupsen/logrus"
 
 	"golang.org/x/net/context"
 )

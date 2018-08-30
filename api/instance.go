@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/Sirupsen/logrus"
-	"gitlab.fbk.eu/raptorbox/redzilla/docker"
-	"gitlab.fbk.eu/raptorbox/redzilla/model"
-	"gitlab.fbk.eu/raptorbox/redzilla/storage"
+	"github.com/ansriaz/redzilla/docker"
+	"github.com/ansriaz/redzilla/model"
+	"github.com/ansriaz/redzilla/storage"
+	"github.com/sirupsen/logrus"
 )
 
 const instanceCollection = "instances"

@@ -1,10 +1,10 @@
 package service
 
 import (
-	"github.com/Sirupsen/logrus"
-	"gitlab.fbk.eu/raptorbox/redzilla/api"
-	"gitlab.fbk.eu/raptorbox/redzilla/docker"
-	"gitlab.fbk.eu/raptorbox/redzilla/model"
+	"github.com/ansriaz/redzilla/api"
+	"github.com/ansriaz/redzilla/docker"
+	"github.com/ansriaz/redzilla/model"
+	"github.com/sirupsen/logrus"
 )
 
 // Start the service

@@ -13,20 +13,31 @@ import (
 	"github.com/ansriaz/redzilla/model"
 	"github.com/ansriaz/redzilla/service"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+
+	"github.com/onrik/logrus/filename" // Add the file name and line number to the logging utility
+	log "github.com/sirupsen/logrus"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 var (
-	Buildtimestamp *string
-	Githash        *string
+	Buildtimestamp string
+	Githash        string
 )
 
-func main() {
-
-	if Buildtimestamp != nil && Githash != nil {
+func init() {
+	if Buildtimestamp != "" && Githash != "" {
 		fmt.Printf("Build timestamp: %s Git Hash: %s\n", Buildtimestamp, Githash)
 	}
+
+	log.SetFormatter(&prefixed.TextFormatter{})
+	// log.SetFormatter(&log.JSONFormatter{})
+	filenameHook := filename.NewHook()
+	filenameHook.Field = "filename" // Customize source field name
+	log.AddHook(filenameHook)
+}
+
+func main() {
 
 	viper.SetDefault("Network", "redzilla")
 	viper.SetDefault("APIPort", ":3000")
@@ -94,23 +105,23 @@ func main() {
 		cfg.AuthHttp = a
 	}
 
-	lvl, err := logrus.ParseLevel(cfg.LogLevel)
+	lvl, err := log.ParseLevel(cfg.LogLevel)
 	if err != nil {
 		panic(fmt.Errorf("Failed to parse level %s: %s", cfg.LogLevel, err))
 	}
-	logrus.SetLevel(lvl)
+	log.SetLevel(lvl)
 
-	if lvl != logrus.DebugLevel {
+	if lvl != log.DebugLevel {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	logrus.Debugf("%++v", cfg)
+	log.Debugf("%++v", cfg)
 
 	defer service.Stop(cfg)
 
 	err = service.Start(cfg)
 	if err != nil {
-		logrus.Errorf("Error: %s", err.Error())
+		log.Errorf("Error: %s", err.Error())
 		panic(err)
 	}
 

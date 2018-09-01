@@ -1,0 +1,82 @@
+# Service Account
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: {{name}}
+ annotations:
+   volume.beta.kubernetes.io/storage-class: {{storageClass}}
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: {{storageSize}}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{name}}
+spec:
+  selector:
+    matchLabels:
+      k8s-app: {{name}}
+  replicas: 1
+  template:
+    metadata:
+
+      labels:
+        k8s-app: {{name}}
+    spec:
+      containers:
+      - image: {{image}}
+        imagePullPolicy: Always
+        name: {{name}}
+        ports:
+        - containerPort: 1880
+        volumeMounts:
+        - name: shared-data
+          mountPath: /data
+      volumes:
+      - name: shared-data
+        persistentVolumeClaim:
+          claimName: {{name}}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{name}}
+spec:
+  ports:
+  - port: 1880
+    protocol: TCP
+  selector:
+    k8s-app: {{name}}
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+
+  name: {{name}}
+  annotations:
+    # kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
+  #   kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - {{name}}.{{domain}}
+    secretName: {{name}}
+  rules:
+    - host: {{name}}.{{domain}}
+      http:
+        paths:
+        - backend:
+            serviceName: {{name}}
+            servicePort: 1880

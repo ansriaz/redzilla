@@ -62,7 +62,6 @@ func validateName(name string) (string, error) {
 
 //Start start API HTTP server
 func Start(cfg *model.Config) error {
-
 	router := gin.Default()
 
 	if len(cfg.AuthType) > 0 && cfg.AuthType != "none" {
@@ -71,10 +70,10 @@ func Start(cfg *model.Config) error {
 
 	router.Any("/v2/instances/:name", func(c *gin.Context) {
 
-		if !isRootDomain(c.Request.Host, cfg.Domain) {
-			c.Next()
-			return
-		}
+		// if !isRootDomain(c.Request.Host, cfg.Domain) {
+		// 	c.Next()
+		// 	return
+		// }
 
 		logrus.Debugf("Api call %s %s", c.Request.Method, c.Request.URL.Path)
 
@@ -100,7 +99,13 @@ func Start(cfg *model.Config) error {
 				return
 			}
 
-			c.JSON(http.StatusOK, instance.GetStatus())
+			// inst, err := instance.GetStatus()
+			//
+			// if err != nil {
+			// 	internalError(c, err)
+			// } else {
+			// 	c.JSON(http.StatusOK, inst)
+			// }
 
 			break
 		case http.MethodPost:
@@ -113,9 +118,13 @@ func Start(cfg *model.Config) error {
 				return
 			}
 
-			c.JSON(http.StatusOK, instance.GetStatus())
-
-			break
+			// inst, err := instance.GetStatus()
+			// if err != nil {
+			// 	internalError(c, err)
+			// } else {
+			// 	c.JSON(http.StatusOK, inst)
+			// }
+			// break
 		case http.MethodPut:
 			logrus.Debugf("Restart instance %s", name)
 
@@ -129,7 +138,13 @@ func Start(cfg *model.Config) error {
 				return
 			}
 
-			c.JSON(http.StatusOK, instance.GetStatus())
+			// inst, err := instance.GetStatus()
+			//
+			// if err != nil {
+			// 	internalError(c, err)
+			// } else {
+			// 	c.JSON(http.StatusOK, inst)
+			// }
 
 			break
 		case http.MethodDelete:
@@ -152,7 +167,6 @@ func Start(cfg *model.Config) error {
 			badRequest(c)
 			break
 		}
-
 	})
 
 	router.GET("/v2/instances", func(c *gin.Context) {

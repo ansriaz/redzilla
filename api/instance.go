@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/ansriaz/redzilla/docker"
+	"github.com/ansriaz/redzilla/client"
 	"github.com/ansriaz/redzilla/model"
 	"github.com/ansriaz/redzilla/storage"
 	"github.com/sirupsen/logrus"
@@ -68,7 +68,7 @@ func NewInstance(name string, cfg *model.Config) *Instance {
 	}
 
 	// TODO add support to port mapping (eg. MQTT)
-	i.instance.Port = NodeRedPort
+	// i.instance.Port = NodeRedPort
 
 	return &i
 }
@@ -143,7 +143,7 @@ func (i *Instance) Start() error {
 		return err
 	}
 
-	err = docker.StartContainer(i.instance.Name, i.cfg)
+	err = client.GetClient().DeployInstance(i.instance.Name)
 	if err != nil {
 		return err
 	}
@@ -152,16 +152,17 @@ func (i *Instance) Start() error {
 }
 
 //StartLogsPipe start the container log pipe
-func (i *Instance) StartLogsPipe() error {
-	logrus.Debugf("Start log pipe for %s", i.instance.Name)
-	return docker.ContainerWatchLogs(i.logContext.GetContext(), i.instance.Name, i.logger.GetFile())
-}
+// TODO Watch logs of container or something
+// func (i *Instance) StartLogsPipe() error {
+// 	logrus.Debugf("Start log pipe for %s", i.instance.Name)
+// 	return docker.ContainerWatchLogs(i.logContext.GetContext(), i.instance.Name, i.logger.GetFile())
+// }
 
 //StopLogsPipe stop the container log pipe
-func (i *Instance) StopLogsPipe() {
-	logrus.Debugf("Stopped log pipe for %s", i.instance.Name)
-	i.logContext.Cancel()
-}
+// func (i *Instance) StopLogsPipe() {
+// 	logrus.Debugf("Stopped log pipe for %s", i.instance.Name)
+// 	i.logContext.Cancel()
+// }
 
 //Remove instance and stop it if running
 func (i *Instance) Remove() error {
@@ -176,6 +177,11 @@ func (i *Instance) Remove() error {
 		return err
 	}
 
+	err = client.GetClient().DeleteInstance(i.instance.Name)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -184,7 +190,7 @@ func (i *Instance) Stop() error {
 
 	logrus.Debugf("Stopping instance %s", i.instance.Name)
 
-	err := docker.StopContainer(i.instance.Name)
+	err := client.GetClient().StopInstance(i.instance.Name)
 	if err != nil {
 		return err
 	}
@@ -193,8 +199,15 @@ func (i *Instance) Stop() error {
 }
 
 //GetStatus return the current instance known status
-func (i *Instance) GetStatus() *model.Instance {
-	return i.instance
+func (i *Instance) GetStatus() (*model.Instance, error) {
+	// logrus.Debug("Pippo")
+	// logrus.Debug(client.GetClient())
+	// logrus.Debug(i)
+	err := client.GetClient().UpdateInstanceInformation(i.instance)
+	if err != nil {
+		return nil, err
+	}
+	return i.instance, nil
 }
 
 //Exists check if the instance has been stored
@@ -216,22 +229,13 @@ func (i *Instance) Exists() (bool, error) {
 
 //IsRunning check if the instance is running
 func (i *Instance) IsRunning() (bool, error) {
-
-	if i.instance.Status == model.InstanceStarted {
-		return true, nil
-	}
-
-	info, err := docker.GetContainer(i.instance.Name)
+	info, err := client.GetClient().GetInstanceStatus(i.instance.Name)
 	if err != nil {
 		return false, err
 	}
 
-	running := info.ContainerJSONBase != nil
-	if running {
-		i.instance.Status = model.InstanceStarted
-	} else {
-		i.instance.Status = model.InstanceStopped
-	}
+	running := info == model.InstanceRunning
+	i.instance.Status = info
 
 	return running, nil
 }

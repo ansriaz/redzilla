@@ -1,0 +1,38 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /home/gilardoni/.minikube/ca.crt
+    server: https://192.168.99.100:8443
+  name: minikube
+- cluster:
+    certificate-authority: certs/openiot/k8s-ca.crt
+    server: https://master.k8s.raptorbox.eu:6443
+  name: openiot
+contexts:
+- context:
+    cluster: openiot
+    namespace: raptorbox
+    user: gilardoni-openiot
+  name: gilardoni-openiot
+- context:
+    cluster: minikube
+    user: minikube
+  name: minikube
+current-context: minikube
+kind: Config
+preferences: {}
+users:
+- name: gilardoni-openiot
+  user:
+    auth-provider:
+      config:
+        client-id: k8s-user
+        client-secret: QLEWCTFS4uTcM9Y2bIqXQjfnw8DekuCe6YKQxKsl
+        id-token: eyJhbGciOiJSUzI1NiIsImtpZCI6IjRkNTFjNzI2M2FlOWU2YjA4NDRiMDQ0ZDdiZWM0YmExOGViZmIxNjYifQ.eyJpc3MiOiJodHRwczovL2RleC5rOHMucmFwdG9yYm94LmV1Iiwic3ViIjoiQ2hVeE1UTTJNRGM1TnpBek9EWTVOekF3TnpNNE56a1NCbWR2YjJkc1pRIiwiYXVkIjoiazhzLXVzZXIiLCJleHAiOjE1MzU2MzkzMTcsImlhdCI6MTUzNTU1MjkxNywiYXRfaGFzaCI6IjMtZHI2SWMzOThGVlEwYTZaaDgyT2ciLCJlbWFpbCI6ImdpbGFyZG9uaUBmYmsuZXUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFuZHJlYSBHaWxhcmRvbmkifQ.TKa-8rHnDlfhLtycJCDwj2CUURnduXCZtWD-uh5mQW3Beh9h-AIFok5GYBr2uucyiIxBQT0PbvVF144jg0ELcuVQBEtIyQr5mkyaDfL2IyR5A2z_frNw0mMBQUvk7lKVxN1s-6_on8QC1gtXv04MU2N4ZXfhu-8oTDaoeas1RMzDaKSbnqiYH2RtsEnxh5SNLYabcYDhDY81aobVOK_vz8dPmjjc89pwmaertDgJeuRSmP4JI5iPKNCNFLZkesza-DTfnZ2hYvkUZOrm-Y5_ZcZHJLtUQBEkewoWKKjHRIoiMYmiLHOlzADa6aFs3_ULUzSQQrOU6o-G8BqFbY2tYg
+        idp-issuer-url: https://dex.k8s.raptorbox.eu
+        refresh-token: ChlicGRoNGhwYW5hcWI0ZWZ5c3FmdzRldWZsEhlrZ2NlZHBpcTVoNzRvbmxxeGN4bmd6YzRx
+      name: oidc
+- name: minikube
+  user:
+    client-certificate: /home/gilardoni/.minikube/client.crt
+    client-key: /home/gilardoni/.minikube/client.key

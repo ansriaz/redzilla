@@ -134,11 +134,12 @@ func proxyHandler(cfg *model.Config) func(c *gin.Context) {
 			return
 		}
 
-		running, err := instance.IsRunning()
-		if err != nil {
-			internalError(c, err)
-			return
-		}
+		// running, err := instance.IsRunning() //FIXME check if instance is running
+		// if err != nil {
+		// 	internalError(c, err)
+		// 	return
+		// }
+		running := false
 
 		if !running {
 			logrus.Debugf("Container %s not running", name)
@@ -155,13 +156,16 @@ func proxyHandler(cfg *model.Config) func(c *gin.Context) {
 			}
 		}
 
-		ip, err := instance.GetIP()
+		//FIXME i am not getting an ip address anymore, but an url
+		// ip, err := instance.GetUrl()
+		url, err := instance.GetUrl()
 		if err != nil {
 			internalError(c, err)
 			return
 		}
 
-		c.Request.Host = ip + ":" + NodeRedPort
+		// c.Request.Host = ip + ":" + NodeRedPort
+		c.Request.Host = url
 
 		c.Request.URL.Scheme = "http"
 		c.Request.URL.Host = c.Request.Host

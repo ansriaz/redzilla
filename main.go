@@ -13,8 +13,10 @@ import (
 	"github.com/ansriaz/redzilla/model"
 	"github.com/ansriaz/redzilla/service"
 	"github.com/gin-gonic/gin"
+	"github.com/onrik/logrus/filename" // Add the file name and line number to the logging utility
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 var (
@@ -22,11 +24,19 @@ var (
 	Githash        *string
 )
 
-func main() {
-
+func init() {
 	if Buildtimestamp != nil && Githash != nil {
 		fmt.Printf("Build timestamp: %s Git Hash: %s\n", Buildtimestamp, Githash)
 	}
+
+	logrus.SetFormatter(&prefixed.TextFormatter{})
+	// log.SetFormatter(&log.JSONFormatter{})
+	filenameHook := filename.NewHook()
+	filenameHook.Field = "filename" // Customize source field name
+	logrus.AddHook(filenameHook)
+}
+
+func main() {
 
 	viper.SetDefault("Network", "redzilla")
 	viper.SetDefault("APIPort", ":3000")
@@ -38,6 +48,10 @@ func main() {
 	viper.SetDefault("LogLevel", "info")
 	viper.SetDefault("Autostart", false)
 	viper.SetDefault("EnvPrefix", "")
+
+	viper.SetDefault("DeployOn", "docker")
+	viper.SetDefault("K8STemplate", "./k8s-template.yml")
+	viper.SetDefault("K8SNamespace", "default")
 
 	viper.SetDefault("AuthType", "none")
 	viper.SetDefault("AuthHttpMethod", "GET")
@@ -61,17 +75,22 @@ func main() {
 	}
 
 	cfg := &model.Config{
-		Network:            viper.GetString("Network"),
-		APIPort:            viper.GetString("APIPort"),
-		Domain:             viper.GetString("Domain"),
-		ImageName:          viper.GetString("ImageName"),
-		StorePath:          viper.GetString("StorePath"),
-		InstanceDataPath:   viper.GetString("InstanceDataPath"),
-		InstanceConfigPath: viper.GetString("InstanceConfigPath"),
-		LogLevel:           viper.GetString("LogLevel"),
-		Autostart:          viper.GetBool("Autostart"),
-		EnvPrefix:          viper.GetString("EnvPrefix"),
-		AuthType:           viper.GetString("AuthType"),
+		Network:               viper.GetString("Network"),
+		APIPort:               viper.GetString("APIPort"),
+		Domain:                viper.GetString("Domain"),
+		ImageName:             viper.GetString("ImageName"),
+		StorePath:             viper.GetString("StorePath"),
+		InstanceDataPath:      viper.GetString("InstanceDataPath"),
+		InstanceConfigPath:    viper.GetString("InstanceConfigPath"),
+		LogLevel:              viper.GetString("LogLevel"),
+		Autostart:             viper.GetBool("Autostart"),
+		EnvPrefix:             viper.GetString("EnvPrefix"),
+		AuthType:              viper.GetString("AuthType"),
+		DeployOn:              viper.GetString("DeployOn"),
+		K8STemplate:           viper.GetString("K8STemplate"),
+		K8SNamespace:          viper.GetString("K8SNamespace"),
+		ClusterAccess:         viper.GetString("ClusterAccess"),
+		TemplateSubstitutions: viper.Sub("TemplateSubstitutions").AllSettings(),
 	}
 
 	if strings.ToLower(cfg.AuthType) == "http" {
@@ -113,5 +132,4 @@ func main() {
 		logrus.Errorf("Error: %s", err.Error())
 		panic(err)
 	}
-
 }

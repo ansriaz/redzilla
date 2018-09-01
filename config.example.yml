@@ -1,15 +1,34 @@
 
 Network: redzilla
 APIPort: :3000
-Domain: redzilla.localhost
+# Domain: redzilla.localhost
 ImageName: nodered/node-red-docker
 StorePath: ./data/store
 # Mounted to /data, will be ${InstanceDataPath}/${InstanceName} with instance name in path
 InstanceDataPath: ./data/instances
 # Mounted to /config, will be ${InstanceConfigPath} with no instance name specialization
 InstanceConfigPath: ./data/config
-LogLevel: info
+LogLevel: Debug
 EnvPrefix:
+
+DeployOn: k8s
+# Define the cluster access either through kubeconfig or inclusteraccess
+# ClusterAccess: InCluster
+ClusterAccess: config
+K8STemplate: k8s-template.yml
+# this are the field substitutions settings for the template, the variables
+# that starts with a $ are defined at runtime. The variable names are case insensitive
+# The actual code supports:
+# - $InstanceName: name of the instance to be deployed
+# - $ImageName: the ImageName filed of this file
+TemplateSubstitutions:
+  name: "$InstanceName"
+  pippo: "a"
+  image: "$ImageName"
+  storageSize: "2G"
+  storageClass: "glusterfs-storage"
+  domain: "example.com"
+
 
 #none or http
 AuthType: none

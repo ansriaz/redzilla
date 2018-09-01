@@ -1,66 +1,84 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/ansriaz/redzilla/api"
-	"github.com/ansriaz/redzilla/docker"
+	"github.com/ansriaz/redzilla/client"
+	"github.com/ansriaz/redzilla/client/docker"
+	"github.com/ansriaz/redzilla/client/k8s"
 	"github.com/ansriaz/redzilla/model"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // Start the service
 func Start(cfg *model.Config) error {
+	switch cfg.DeployOn {
+	case "k8s", "kubernetes":
+		log.Info("Using Kubernetes API for spawning the pods")
+		client.SetClient(k8s.NewK8SClient())
+	case "docker", "":
+		log.Info("Using Docker API for spawning the containers")
+		client.SetClient(docker.NewDockerClient())
+	default:
+		return errors.New(fmt.Sprintf("Unrecognized API kind %s", cfg.DeployOn))
+	}
+	cli := client.GetClient()
 
-	msg := docker.ListenEvents(cfg)
-	go func() {
-		for {
-			select {
-			case ev := <-msg:
-
-				instance := api.GetInstance(ev.Name, cfg)
-
-				exists, err := instance.Exists()
-				if err != nil {
-					logrus.Errorf("Failed loading instance %s", ev.Name)
-					continue
-				}
-
-				if !exists {
-					continue
-				}
-
-				switch ev.Action {
-				case "die":
-					logrus.Warnf("Container exited %s", ev.Name)
-
-					instance.StopLogsPipe()
-
-					//reset cached informations
-					rerr := instance.Reset()
-					if rerr != nil {
-						logrus.Warnf("Failed to reset detail for %s: %s", instance.GetStatus().Name, rerr.Error())
-					}
-
-					break
-				case "start":
-					err = instance.StartLogsPipe()
-					if err != nil {
-						logrus.Warnf("Cannot start logs pipe for %s: %s", ev.Name, err.Error())
-					}
-
-					//cache container IP
-					instance.GetIP()
-					instance.GetStatus().Status = model.InstanceStarted
-
-					break
-				default:
-					logrus.Infof("Container %s %s", ev.Action, ev.Name)
-					break
-				}
-
-				break
-			}
-		}
-	}()
+	cli.Init(cfg)
+	// msg := docker.ListenEvents(cfg)
+	// go func() {
+	// 	for {
+	// 		select {
+	// 		case ev := <-msg:
+	//
+	// 			instance := api.GetInstance(ev.Name, cfg)
+	//
+	// 			exists, err := instance.Exists()
+	// 			if err != nil {
+	// 				logrus.Errorf("Failed loading instance %s", ev.Name)
+	// 				continue
+	// 			}
+	//
+	// 			if !exists {
+	// 				continue
+	// 			}
+	//
+	// 			switch ev.Action {
+	// 			case "die":
+	// 				logrus.Warnf("Container exited %s", ev.Name)
+	//
+	// 				instance.StopLogsPipe()
+	//
+	// 				//reset cached informations
+	// 				rerr := instance.Reset()
+	// 				if rerr != nil {
+	// 					logrus.Warnf("Failed to reset detail for %s: %s", instance.GetStatus().Name, rerr.Error())
+	// 				}
+	//
+	// 				break
+	// 			case "start":
+	// 				// TODO create log pipe
+	// 				// err = instance.StartLogsPipe()
+	// 				if err != nil {
+	// 					logrus.Warnf("Cannot start logs pipe for %s: %s", ev.Name, err.Error())
+	// 				}
+	//
+	// 				//cache container IP
+	// 				instance.GetIP()
+	// 				instance.GetStatus().Status = model.InstanceStarted
+	//
+	// 				break
+	// 			default:
+	// 				logrus.Infof("Container %s %s", ev.Action, ev.Name)
+	// 				break
+	// 			}
+	//
+	// 			break
+	// 		}
+	// 	}
+	// }()
 
 	err := api.Start(cfg)
 	if err != nil {
